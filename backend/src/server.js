@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const groupRoutes = require("./routes/groupRoutes");
@@ -16,31 +15,51 @@ if (!process.env.JWT_SECRET) {
 connectDB();
 
 const app = express();
+
 const normalizeOrigin = (value = "") =>
   value.trim().replace(/^['"]|['"]$/g, "").replace(/\/+$/, "").toLowerCase();
-const allowedOrigins = process.env.CORS_ORIGIN
+
+const configuredOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => normalizeOrigin(origin))
   : [];
-const corsOptions = {
-  origin(origin, callback) {
-    if (!origin) {
-      return callback(null, true);
+
+const isOriginAllowed = (requestOrigin) => {
+  if (!requestOrigin) {
+    return true;
+  }
+
+  const normalized = normalizeOrigin(requestOrigin);
+  if (configuredOrigins.length === 0) {
+    return true;
+  }
+
+  return configuredOrigins.some((allowed) => {
+    if (allowed === normalized) {
+      return true;
     }
-    const normalizedOrigin = normalizeOrigin(origin);
-    if (
-      allowedOrigins.length === 0 ||
-      allowedOrigins.includes(normalizedOrigin)
-    ) {
-      return callback(null, true);
+    if (allowed.startsWith("*.")) {
+      const suffix = allowed.slice(1);
+      return normalized.endsWith(suffix);
     }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+    return false;
+  });
 };
 
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use((req, res, next) => {
+  const requestOrigin = req.headers.origin;
+  if (isOriginAllowed(requestOrigin)) {
+    res.header("Access-Control-Allow-Origin", requestOrigin || "*");
+  }
+  res.header("Vary", "Origin");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+  return next();
+});
+
 app.use(express.json());
 
 app.get("/", (_req, res) => {
