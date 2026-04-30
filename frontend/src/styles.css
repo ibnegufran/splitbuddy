@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    @apply m-0 bg-haze text-slate-100 antialiased;
+    font-family: "Manrope", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Sora", "Manrope", sans-serif;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-2xl border border-white/20 bg-white/10 p-6 shadow-glass backdrop-blur-xl;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-300/70 focus:border-cyan-300 focus:outline-none;
+  }
+
+  .select-field {
+    @apply field appearance-none bg-[linear-gradient(45deg,transparent_50%,#a5f3fc_50%),linear-gradient(135deg,#a5f3fc_50%,transparent_50%)] bg-[position:calc(100%-20px)_calc(50%-2px),calc(100%-14px)_calc(50%-2px)] bg-[size:6px_6px,6px_6px] bg-no-repeat pr-10;
+  }
+
+  .btn-primary {
+    @apply rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:from-cyan-300 hover:to-blue-400 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-medium text-slate-100 transition hover:bg-white/20;
+  }
+
+  .surface {
+    @apply rounded-xl border border-white/15 bg-slate-900/30 p-4;
+  }
+}
