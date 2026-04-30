@@ -364,6 +364,17 @@ const DashboardPage = () => {
           {!group ? (
             <div className="glass-panel">
               <p className="text-slate-200">Create or select a group to continue.</p>
+              <form className="mt-4 flex flex-col gap-3 sm:flex-row" onSubmit={onCreateGroup}>
+                <input
+                  className="field"
+                  value={groupName}
+                  onChange={(e) => setGroupName(e.target.value)}
+                  placeholder="Enter new group name"
+                />
+                <button className="btn-primary sm:w-auto" type="submit">
+                  Create Group
+                </button>
+              </form>
             </div>
           ) : (
             <>
