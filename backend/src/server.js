@@ -10,8 +10,7 @@ const publicRoutes = require("./routes/publicRoutes");
 dotenv.config();
 
 if (!process.env.JWT_SECRET) {
-  console.error("JWT_SECRET is missing in environment variables.");
-  process.exit(1);
+  throw new Error("JWT_SECRET is missing in environment variables.");
 }
 
 connectDB();
@@ -20,7 +19,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173"
+    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : true
   })
 );
 app.use(express.json());
@@ -39,7 +38,11 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: "Something went wrong." });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
