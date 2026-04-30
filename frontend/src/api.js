@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const TOKEN_KEY = "splitbuddy_token";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, "");
 
 const api = axios.create({
   baseURL: API_BASE_URL
