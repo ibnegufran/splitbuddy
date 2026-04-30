@@ -16,15 +16,21 @@ if (!process.env.JWT_SECRET) {
 connectDB();
 
 const app = express();
+const normalizeOrigin = (value = "") =>
+  value.trim().replace(/^['"]|['"]$/g, "").replace(/\/+$/, "").toLowerCase();
 const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => normalizeOrigin(origin))
   : [];
 const corsOptions = {
   origin(origin, callback) {
     if (!origin) {
       return callback(null, true);
     }
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (
+      allowedOrigins.length === 0 ||
+      allowedOrigins.includes(normalizedOrigin)
+    ) {
       return callback(null, true);
     }
     return callback(new Error("Not allowed by CORS"));
